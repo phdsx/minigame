@@ -1,0 +1,20 @@
+{
+  "name": "桥头防线",
+  "platform": "web-mobile",
+  "buildPath": "project://build",
+  "outputName": "web",
+  "debug": false,
+  "startScene": "953436ac-ad1e-40cb-bfe4-51a31874292e",
+  "scenes": [
+    {
+      "url": "db://assets/Main.scene",
+      "uuid": "953436ac-ad1e-40cb-bfe4-51a31874292e"
+    }
+  ],
+  "orientation": "portrait",
+  "packages": {
+    "web-mobile": {
+      "orientation": "portrait"
+    }
+  }
+}

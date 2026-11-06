@@ -1,0 +1,125 @@
+[
+  {
+    "__type__": "cc.SceneAsset",
+    "_name": "Main",
+    "scene": {
+      "__id__": 1
+    }
+  },
+  {
+    "__type__": "cc.Scene",
+    "_name": "Main",
+    "_children": [
+      {
+        "__id__": 2
+      }
+    ],
+    "_active": true,
+    "_components": [],
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_layer": 1073741824,
+    "_id": "953436ac-ad1e-40cb-bfe4-51a31874292e",
+    "_globals": {
+      "__id__": 4
+    }
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "BridgeheadDefender",
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_components": [
+      {
+        "__id__": 3
+      }
+    ],
+    "_active": true,
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_layer": 1073741824,
+    "_id": "d26ba71d-df09-45eb-9760-e8b321d80a08"
+  },
+  {
+    "__type__": "b7edd9D5nlLJqIJ4zhdPPN4",
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true
+  },
+  {
+    "__type__": "cc.SceneGlobals",
+    "ambient": {
+      "__id__": 5
+    },
+    "shadows": {
+      "__id__": 6
+    },
+    "_skybox": {
+      "__id__": 7
+    }
+  },
+  {
+    "__type__": "cc.AmbientInfo",
+    "_skyColor": {
+      "__type__": "cc.Color",
+      "r": 190,
+      "g": 220,
+      "b": 237,
+      "a": 255
+    },
+    "_skyIllum": 22000,
+    "_groundAlbedo": {
+      "__type__": "cc.Color",
+      "r": 127,
+      "g": 153,
+      "b": 153,
+      "a": 255
+    }
+  },
+  {
+    "__type__": "cc.ShadowsInfo",
+    "_enabled": false
+  },
+  {
+    "__type__": "cc.SkyboxInfo",
+    "_enabled": false,
+    "_useIBL": false
+  }
+]
