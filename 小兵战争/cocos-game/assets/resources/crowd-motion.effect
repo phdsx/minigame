@@ -1,0 +1,90 @@
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: crowd-vs:vert
+      frag: crowd-fs:frag
+      properties:
+        mainColor: { value: [1, 1, 1, 1], linear: true, editor: { type: color } }
+}%
+
+CCProgram crowd-vs %{
+  precision highp float;
+  #include <legacy/decode-base>
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/local-batch>
+  in vec4 a_color;
+  #if USE_INSTANCING
+    // Phase, action (idle/run/punch/hurt), tower support pose, unused.
+    in vec4 a_anim;
+  #endif
+  out vec3 v_shade;
+
+  vec3 segment(vec3 p, vec3 a, vec3 b, vec3 destA, vec3 destB) {
+    vec3 fromDir=normalize(b-a), toDir=normalize(destB-destA);
+    vec3 v=p-a;
+    v+=fromDir*dot(v,fromDir)*(length(destB-destA)/length(b-a)-1.0);
+    vec3 axis=cross(fromDir,toDir);
+    float cosine=dot(fromDir,toDir);
+    return destA+v+cross(axis,v)+cross(axis,cross(axis,v))/max(0.001,1.0+cosine);
+  }
+
+  vec4 vert () {
+    vec3 p=a_position;
+    vec4 anim=vec4(0.0);
+    #if USE_INSTANCING
+      anim=a_anim;
+    #endif
+    float bone=a_texCoord.x;
+    bool support=anim.z>0.5;
+    if(bone>8.5) {
+      if(support)p=vec3(0.0);
+    } else if(bone>0.5) {
+      bool leg=bone<4.5;
+      bool lower=mod(bone,2.0)<0.5;
+      float side=(bone<2.5 || (bone>4.5 && bone<6.5))?-1.0:1.0;
+      float phase=anim.x+(side>0.0?3.14159265:0.0);
+      float swing=(anim.y>0.5 && !support)?sin(phase):0.0;
+      vec3 a; vec3 b; vec3 targetA; vec3 targetB;
+      if(leg) {
+        vec3 hip=vec3(side*.085,.43,0.0);
+        vec3 knee=vec3(hip.x,.23,0.0);
+        vec3 ankle=vec3(hip.x,.23-cos(.22)*.19,-sin(.22)*.19);
+        float thigh=swing*.72;
+        vec3 targetKnee=vec3(hip.x,.43-cos(thigh)*.20,sin(thigh)*.20);
+        float bend=thigh-(.22+max(0.0,-swing)*1.15);
+        vec3 targetAnkle=vec3(hip.x,targetKnee.y-cos(bend)*.19,targetKnee.z+sin(bend)*.19);
+        a=lower?knee:hip; b=lower?ankle:knee;
+        targetA=lower?targetKnee:hip; targetB=lower?targetAnkle:targetKnee;
+      } else {
+        vec3 shoulder=vec3(side*.14,.69,0.0);
+        vec3 elbow=vec3(side*.20,.52,0.0);
+        vec3 hand=vec3(side*.20,.43,.12);
+        float arm=-swing*.62;
+        vec3 targetElbow=vec3(side*.20,.69-cos(arm)*.17,sin(arm)*.17);
+        vec3 targetHand=vec3(side*.20,targetElbow.y-.09,targetElbow.z+.12);
+        if(support) {
+          targetElbow=vec3(side*.22,.88,0.0); targetHand=vec3(side*.13,1.07,0.0);
+        } else if(anim.y>2.5) {
+          targetElbow=vec3(side*.30,.80,-.13); targetHand=vec3(side*.38,.63,-.30);
+        } else if(anim.y>1.5) {
+          float punch=max(0.0,sin(anim.x+(side>0.0?0.0:3.14159265)));
+          targetElbow=vec3(side*.21,.77,.13+punch*.16); targetHand=vec3(side*.12,.83,.22+punch*.48);
+        }
+        a=lower?elbow:shoulder;b=lower?hand:elbow;
+        targetA=lower?targetElbow:shoulder;targetB=lower?targetHand:targetElbow;
+      }
+      p=segment(p,a,b,targetA,targetB);
+    }
+    mat4 matWorld; CCGetWorldMatrix(matWorld);
+    v_shade=a_color.rgb;
+    return cc_matProj*(cc_matView*matWorld)*vec4(p,1.0);
+  }
+}%
+
+CCProgram crowd-fs %{
+  precision highp float;
+  #include <legacy/output-standard>
+  in vec3 v_shade;
+  uniform Constant { vec4 mainColor; };
+  vec4 frag () { return CCFragOutput(vec4(mainColor.rgb*v_shade,1.0)); }
+}%
